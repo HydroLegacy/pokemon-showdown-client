@@ -21,17 +21,27 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v6 # Upgraded to v6 for Node 24 support
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v5 # Upgraded to v5 for Node 24 support
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v5 # Upgraded to v5 for Node 24 support
+      - name: Install Dependencies and Build Client
+        run: |
+          npm install --legacy-peer-deps || true
+          node build
+
+      - name: Setup Pages Routing
+        uses: actions/configure-pages@v5
+
+      - name: Upload Finished Web Files
+        uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy Live to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
